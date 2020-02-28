@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Home</title>
+    <meta charset="utf-8" />
+    <meta id="metaView" name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+	
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+	<script id="mapListenersScript">
+		$(document).on("ready", function() {
+			if (window.addEventListener) {
+				// For standards-compliant web browsers
+				window.addEventListener("message", mapListeners, false);
+			}
+			else {
+				window.attachEvent("onmessage", mapListeners);
+			}
+		});
+		
+		function mapListeners(evt) {
+			if (evt.origin === location.origin) {
+				switch(evt.data) {
+					case "initIframeListener":
+						initIframeListener();
+						break;
+					default:
+						//invalid listener
+						break;
+				}
+			}
+		}
+		
+		function initIframeListener() {
+			$(".frame-link").on("click.ai.frame", function() {
+				event.preventDefault();
+				
+				let href = `${$(this).attr("href").replace(/\.\.\//g, "")}?t=${Date.now()}`;
+				
+				$(parent.document).find("#navIframe").attr("src", href);
+			});
+			$(".window-link").on("click.ai.frame", function() {
+				event.preventDefault();
+				
+				let href = $(this).attr("href");
+				
+				parent.location.href = href;
+			});
+		}
+	</script>
+	
+	<style>
+		
+	</style>
+</head>
+<body>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Home</li>
+    </ol>
+	
+	<div class="container py-2">
+		<div class="row mb-2">
+			<div class="col-12 px-3">
+				<a href="https://weeklyproject.club/" class="window-link">Join the weeklyproject</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="list-group col-12 px-3">
+				<a class="list-group-item list-group-item-action frame-link" href="../drawbridge-operator">Week 2 - Drawbridge Operator</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

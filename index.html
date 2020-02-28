@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Pepware Weekly Projects</title>
+    <meta charset="utf-8" />
+    <meta id="metaView" name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+	
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+	
+	<script>
+		$(document).on("ready", function() {
+			$(".frame-link").on("click.ai.frame", function() {
+				event.preventDefault();
+				
+				let href = `${$(this).attr("href")}?t=${Date.now()}`;
+				
+				if ($(this).hasClass("nav-link")) {
+					$(this).closest(".navbar-collapse").on("hidden.bs.collapse", function() {
+						$("#navIframe").attr("src", href);
+						
+						$(this).off("hidden.bs.collapse");
+					}).collapse("hide");
+				}
+				else {
+					$("#navIframe").attr("src", href);
+				}
+			});
+			
+			$("#navIframe").attr("src", `Home?t=${Date.now()}`);
+			
+			$("#navIframe").on("load", function() {
+				var iframeWindow = $(this)[0].contentWindow;
+				
+				iframeWindow.postMessage("initIframeListener", location.origin);
+			});
+		});
+	</script>
+	<style>
+		html, body {
+			width: 100vw;
+			height: 100vh;
+			overflow: hidden;
+		}
+		#navIframe {
+			width: 100vw;
+			height: calc(100vh - 56px);
+			margin-top: 56px;
+			border: unset;
+		}
+		.navbar-toggler, .navbar-toggler:focus {
+			width: 44px;
+			border: unset;
+			outline: unset;
+		}
+		.navbar-toggler[aria-expanded=false] .fa-chevron-up {
+			display: none;
+		}
+		.navbar-toggler[aria-expanded=true] .fa-navicon {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-dark bg-dark fixed-top" role="navigation">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="fa fa-navicon"></span><span class="fa fa-chevron-up"></span>
+		</button>
+		<a class="navbar-brand" href=".">Pepware Weekly Projects</a>
+
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item">
+					<a class="nav-link frame-link" href="Home">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link frame-link" href="drawbridge-operator">Week 2 - Drawbridge Operator</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<iframe id="navIframe" src=""></iframe>
+</body>
+</html>

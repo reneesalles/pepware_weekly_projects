@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Week 2 - Drawbridge Operator</title>
+    <meta charset="utf-8" />
+    <meta id="metaView" name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+	
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+	<script id="mapListenersScript">
+		$(document).on("ready", function() {
+			if (window.addEventListener) {
+				// For standards-compliant web browsers
+				window.addEventListener("message", mapListeners, false);
+			}
+			else {
+				window.attachEvent("onmessage", mapListeners);
+			}
+		});
+		
+		function mapListeners(evt) {
+			if (evt.origin === location.origin) {
+				switch(evt.data) {
+					case "initIframeListener":
+						initIframeListener();
+						break;
+					default:
+						//invalid listener
+						break;
+				}
+			}
+		}
+		
+		function initIframeListener() {
+			$(".frame-link").on("click.ai.frame", function() {
+				event.preventDefault();
+				
+				let href = `${$(this).attr("href").replace(/\.\.\//g, "")}?t=${Date.now()}`;
+				
+				$(parent.document).find("#navIframe").attr("src", href);
+			});
+			$(".window-link").on("click.ai.frame", function() {
+				event.preventDefault();
+				
+				let href = $(this).attr("href");
+				
+				parent.location.href = href;
+			});
+		}
+	</script>
+	
+	<script>
+		const vehicles = [];
+		var startTime = undefined, lastUpdateTime = undefined;
+		
+		$(document).on("ready", function() {
+			$(document).on("keydown", function() {
+				let code = event.keyCode || event.which;
+				
+				$("[data-shortcut]").each(function() {
+					if (String.fromCharCode(code).toLowerCase() == $(this).data("shortcut")) {
+						$(this).click();
+					}
+				});
+			});
+		});
+		
+		function countVehicle(vehicle) {
+			if (vehicles[vehicle] == undefined) {
+				vehicles[vehicle] = 0;
+			}
+			vehicles[vehicle]++;
+			
+			updateResult();
+		}
+		
+		function updateResult() {
+			$txtResult = $("#txtResult");
+			
+			let str = "";
+			
+			if (startTime == undefined) {
+				startTime = new Date();
+			}
+			lastUpdateTime = new Date();
+			
+			str += `Started at ${startTime.toLocaleString()}\n`;
+			str += `Current Time ${lastUpdateTime.toLocaleString()}\n`;
+			
+			let totalVehicles = 0;
+			for (let v in vehicles) {
+				totalVehicles += vehicles[v];
+				str += `total of ${v}s = ${vehicles[v]}\n`;
+			}
+			str += `total vehicles = ${totalVehicles}`;
+			$txtResult.val(str);
+		}
+	</script>
+	
+	<style>
+		.main-grid-container {
+			display: grid;
+			grid-template-areas:
+				"result"
+				"vehicles";
+			grid-gap: 5px;
+		}
+		.vehicles {
+			grid-area: vehicles;
+			height: 50vh;
+		}
+		.result {
+			grid-area: result;
+			min-height: 130px;
+		}
+		.grid-container {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			grid-gap: 5px;
+		}
+		.grid-container > * {
+			margin: 0 !important;
+		}
+		button > sub {
+			display: block;
+			font-size: 10px;
+		}
+	</style>
+</head>
+<body>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Week 2 - Drawbridge Operator</li>
+    </ol>
+	
+	<div class="main-grid-container py-2">
+		<div class="grid-container vehicles">
+			<button type="button" onclick="countVehicle('car');" class="btn btn-lg btn-primary btn-block" data-shortcut="c">
+				<span class="fa fa-plus"></span> Car
+				<sub>(Shortcut - Press C)</sub>
+			</button>
+			<button type="button" onclick="countVehicle('truck');" class="btn btn-lg btn-secondary btn-block" data-shortcut="t">
+				<span class="fa fa-plus"></span> Truck
+				<sub>(Shortcut - Press T)</sub>
+			</button>
+		</div>
+		<div class="d-flex result">
+			<textarea id="txtResult" class="form-control" placeholder="Total of Vehicles" readonly></textarea>
+		</div>
+	</div>
+</body>
+</html>
